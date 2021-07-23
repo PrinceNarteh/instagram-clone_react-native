@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Button, StyleSheet, Text, View, TextInput } from "react-native";
 import firebase from "firebase";
+import Input from "../../components/Input";
 
 interface IState {
   name: string;
@@ -19,6 +20,7 @@ const RegisterScreen = () => {
   const onChangeText = (name: string) => {};
 
   const onSignUp = () => {
+    console.log(process.env.REACT_APP_apiKey);
     firebase
       .auth()
       .createUserWithEmailAndPassword(state.email, state.password)
@@ -31,28 +33,35 @@ const RegisterScreen = () => {
   };
 
   return (
-    <View>
-      <TextInput
+    <View style={styles.container}>
+      <Input
         placeholder="Name"
         defaultValue={state.name}
         onChangeText={(val) => setState({ ...state, name: val })}
       />
-      <TextInput
+      <Input
         placeholder="Email"
+        keyboardType="email-address"
         defaultValue={state.email}
         onChangeText={(val) => setState({ ...state, email: val })}
       />
-      <TextInput
+      <Input
         placeholder="Password"
         defaultValue={state.password}
         onChangeText={(val) => setState({ ...state, password: val })}
         secureTextEntry
       />
-      <Button title="Register" onPress={() => {}} />
+      <Button title="Register" onPress={onSignUp} />
     </View>
   );
 };
 
 export default RegisterScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
