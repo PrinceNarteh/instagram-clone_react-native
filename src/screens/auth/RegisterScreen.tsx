@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { Button, StyleSheet, Text, View, TextInput } from "react-native";
+import firebase from "firebase";
 
 interface IState {
   name: string;
@@ -9,7 +9,7 @@ interface IState {
   password: string;
 }
 
-const Register = () => {
+const RegisterScreen = () => {
   const [state, setState] = useState<IState>({
     email: "",
     password: "",
@@ -18,7 +18,17 @@ const Register = () => {
 
   const onChangeText = (name: string) => {};
 
-  const onSignUp = () => {};
+  const onSignUp = () => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(state.email, state.password)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <View>
@@ -43,6 +53,6 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterScreen;
 
 const styles = StyleSheet.create({});
