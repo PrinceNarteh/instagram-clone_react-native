@@ -20,11 +20,16 @@ const RegisterScreen = () => {
   const onChangeText = (name: string) => {};
 
   const onSignUp = () => {
-    console.log(process.env.REACT_APP_apiKey);
+    const { email, password, name } = state;
     firebase
       .auth()
-      .createUserWithEmailAndPassword(state.email, state.password)
+      .createUserWithEmailAndPassword(email, password)
       .then((result) => {
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser?.uid)
+          .set({ name, email });
         console.log(result);
       })
       .catch((error) => {

@@ -1,45 +1,54 @@
 import "react-native-gesture-handler";
-import React, { useState, useEffect } from "react";
 import firebase from "firebase";
-import "./src/utils/firebase";
-
-import Navigation from "./src/components/Navigation";
 import { View, Text } from "react-native";
+import { Provider } from "react-redux";
+
+import React, { useState, useEffect } from "react";
+
+import "./src/utils/firebase";
+import { store } from "./src/redux/store";
+import MainScreen from "./src/screens/MainScreen";
+import Navigation from "./src/components/Navigation";
+
+interface IState {
+  loaded: boolean;
+  loggedIn: boolean;
+}
 
 export default function App() {
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchUser = () => {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-          setLoaded(true);
-          setLoggedIn(false);
-        } else {
-          setLoggedIn(true);
-          setLoaded(false);
-        }
-      });
-    };
-    fetchUser();
+  const [state, setState] = useState<IState>({
+    loaded: false,
+    loggedIn: false,
   });
 
-  if (!loaded) {
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      console.log(user);
+      if (!user) {
+        setState({ ...state, loaded: true });
+      } else {
+        setState({ loaded: true, loggedIn: true });
+      }
+    });
+  });
+
+  console.log(state);
+
+  if (!state.loaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading...</Text>
+        <Text>Loading state...</Text>
       </View>
     );
   }
 
-  if (!loggedIn) {
+  if (!state.loggedIn) {
     return <Navigation />;
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Loading...</Text>
-    </View>
+    <Provider store={store}>
+      <MainScreen />
+    </Provider>
   );
 }
